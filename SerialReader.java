@@ -18,7 +18,9 @@ public class SerialReader {
     public static void main(String[] args) {
         FileOutputStream outfile;
         System.out.println("Co2 logger");
-        SerialPort comPort = SerialPort.getCommPorts()[0];
+	var a = SerialPort.getCommPorts();
+	System.out.println(a.length);
+        SerialPort comPort = SerialPort.getCommPorts()[1];
         comPort.openPort();
         long lastWrite = 0;
         try {
@@ -27,12 +29,12 @@ public class SerialReader {
             String currentco2 = "";
             String currentIoState = "";
             long seconds = 0;
-            int intervalStore = 300;
+            int intervalStore = 60;
 
             //eternal software until exit
             while (true) {
                 //whait avaliable
-                while (comPort.bytesAvailable() == 0) {
+                while (comPort.bytesAvailable() < 1) {
                     Thread.sleep(20);
                 }
 
@@ -59,7 +61,8 @@ public class SerialReader {
                     }
                 }
                 seconds = System.currentTimeMillis() / 1000;
-//                System.out.println("seconds:" + seconds);
+//                System.out.println("seconds:" + seconds)
+//
                 if (seconds % intervalStore == 0 && seconds != lastWrite) {
                     lastWrite = seconds;
                     String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
